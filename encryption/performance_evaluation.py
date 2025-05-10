@@ -29,7 +29,8 @@ def plot_correlation(image1, image2, save_path, title="Image Correlation", label
         plt.ylabel(f"Pixel values of {label2}")
         plt.title(f"{title}\nCorrelation Coefficient: {r:.4f}") 
         plt.tight_layout()
-        plt.savefig(save_path, dpi=150)
+        # plt.savefig(save_path, dpi=150)
+        plt.savefig(str(save_path), dpi=150)
         plt.close()
         
 def compute_histogram(image):
@@ -55,7 +56,8 @@ def plot_histograms(original_image, encrypted_image, save_path):
             axs[i].set_ylabel("Frequency")
             axs[i].grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
 
-        plt.savefig(save_path, dpi=150)
+        # plt.savefig(save_path, dpi=150)
+        plt.savefig(str(save_path), dpi=150)
         plt.close()
 
 
