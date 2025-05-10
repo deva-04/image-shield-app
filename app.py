@@ -7,8 +7,12 @@ import pandas as pd
 from datetime import datetime
 from flask_cors import CORS
 import matplotlib.pyplot as plt
-from encryption.encryptor import encrypt_image, decrypt_image
-from encryption.performance_evaluation import correlation_coefficient, npcr_uaci, plot_correlation, plot_histograms, entropy, chi_square_test, key_sensitivity_test, avalanche_effect, ssim_index
+
+from encryption.encryptor import encrypt_image, decrypt_image, resize_image
+from encryption.performance_evaluation import (
+    correlation_coefficient, npcr_uaci, plot_correlation, plot_histograms,
+    entropy, chi_square_test, key_sensitivity_test, avalanche_effect, ssim_index
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -30,51 +34,51 @@ def process_image():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
 
+    # Get form parameters
     mu = float(request.form['mu'])
     iterations = int(request.form['iterations'])
     key = float(request.form['key'])
     delta = float(request.form['delta'])
 
-    # Timestamp for filenames
+    # Timestamp for file naming
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     base_filename = f"{timestamp}_{file.filename.rsplit('.', 1)[0]}"
 
-    # Save original image
+    # Save and load original image
     original_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_original.png")
     file.save(original_path)
-
-    # Load image using OpenCV
     image = cv2.imread(original_path, cv2.IMREAD_GRAYSCALE)
+    image = resize_image(image)  # Ensure all inputs are 512x512
 
-    # Encrypt
-    encrypted_image, chaotic_sequence, rca_mask, encryption_time = encrypt_image(image, mu=mu, iterations=iterations, key=key)
+    # --- Encryption ---
+    encrypted_image, chaotic_sequence, rca_mask, encryption_time = encrypt_image(
+        image, mu=mu, iterations=iterations, key=key
+    )
     encrypted_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_encrypted.png")
     cv2.imwrite(encrypted_path, encrypted_image)
 
-    # Decrypt
-    decrypted_image, decryption_time = decrypt_image(encrypted_image, chaotic_sequence, rca_mask, iterations=iterations, key=key)
+    # --- Decryption ---
+    decrypted_image, decryption_time = decrypt_image(
+        encrypted_image, chaotic_sequence, rca_mask, iterations=iterations, key=key
+    )
     decrypted_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_decrypted.png")
     cv2.imwrite(decrypted_path, decrypted_image)
 
-    # --- METRIC CALCULATIONS ---
+    # --- Metric Calculations ---
     correlation_enc = correlation_coefficient(image, encrypted_image)
     correlation_dec = correlation_coefficient(image, decrypted_image)
     npcr, uaci = npcr_uaci(image, encrypted_image)
     entropy_enc = entropy(encrypted_image)
-    chi2, p_val = chi2, p_val = chi_square_test(image, encrypted_image)
+    chi2, p_val = chi_square_test(image, encrypted_image)
     ssim_val = ssim_index(image, decrypted_image)
 
-    # Mean Squared Error and PSNR
     mse = np.mean((image - decrypted_image) ** 2)
     psnr = 10 * np.log10(255**2 / mse) if mse != 0 else float('inf')
 
-    # Key sensitivity test
-    diff = key_sensitivity_test(image, mu, iterations, key, delta)
-
-    # Avalanche effect (npcr and uaci)
+    key_diff = key_sensitivity_test(image, mu, iterations, key, delta)
     avg_npcr, avg_uaci = avalanche_effect(image, encrypted_image, key=key, mu=mu, iterations=iterations)
 
-    # Construct the result dict
+    # --- Save Excel Report ---
     results_dict = {
         "Image Name": file.filename,
         "Mu Value (Chaos Function)": mu,
@@ -93,34 +97,33 @@ def process_image():
         "SSIM (Structural Similarity Index)": ssim_val,
         "Chi-Square Statistic": chi2,
         "Chi-Square P-value": p_val,
-        "Key Sensitivity (Pixel Changes)": diff,
+        "Key Sensitivity (Pixel Changes)": key_diff,
         "Avalanche Effect - Avg NPCR (%)": f"{avg_npcr:.4f}",
         "Avalanche Effect - Avg UACI (%)": f"{avg_uaci:.4f}"
     }
 
-    # Save metrics to Excel
     excel_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_metrics.xlsx")
     pd.DataFrame([results_dict]).to_excel(excel_path, index=False)
 
+    # --- Save plots ---
     correlation_enc_plot_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_correlation_enc.png")
-    plot_correlation(image, encrypted_image, correlation_enc_plot_path, title="Original vs Encrypted", label1="Original", label2="Encrypted")
+    plot_correlation(image, encrypted_image, correlation_enc_plot_path, title="Original vs Encrypted")
 
-    correlation_dec_plot_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_correlation_dec.png")   
-    plot_correlation(image, decrypted_image, correlation_dec_plot_path, title="Original vs Decrypted", label1="Original", label2="Decrypted")
+    correlation_dec_plot_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_correlation_dec.png")
+    plot_correlation(image, decrypted_image, correlation_dec_plot_path, title="Original vs Decrypted")
 
-    # Save histogram plot
     histogram_plot_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{base_filename}_histograms.png")
     plot_histograms(image, encrypted_image, histogram_plot_path)
 
+    # --- Response ---
     return jsonify({
-    'encrypted_image': f"/{encrypted_path}",
-    'decrypted_image': f"/{decrypted_path}",
-    'excel_file': f"/{excel_path}",
-    'correlation_plot_encrypted': f"/{correlation_enc_plot_path}",
-    'correlation_plot_decrypted': f"/{correlation_dec_plot_path}",
-    'histogram_plot': f"/{histogram_plot_path}"
-})
-
+        'encrypted_image': f"/{encrypted_path}",
+        'decrypted_image': f"/{decrypted_path}",
+        'excel_file': f"/{excel_path}",
+        'correlation_plot_encrypted': f"/{correlation_enc_plot_path}",
+        'correlation_plot_decrypted': f"/{correlation_dec_plot_path}",
+        'histogram_plot': f"/{histogram_plot_path}"
+    })
 
 @app.route('/static/results/<path:filename>')
 def download_file(filename):
