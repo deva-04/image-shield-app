@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Encryption Tool</title>
+    <link rel="stylesheet" href="static\styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ImageShield App</h1>
+        <div class="tagline-wrapper">
+            <h2>Secure Image Encryption and Decryption Made Simple</h2>
+        </div>
+
+        <form id="encryptionForm">
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            <div id="uploadedPreviewContainer" class="preview-grid">
+                <div>
+                    <label for="uploadedPreview">Uploaded Image Preview</label>
+                    <img id="uploadedPreview" src="" alt="Uploaded Image" class="preview-img" />
+                </div>
+            </div>
+
+            <label for="mu">Mu (Chaos Parameter):</label>
+            <input type="number" id="mu" name="mu" min="3" max="4" step="any" value="3.99" required>
+
+            <label for="iterations">Cellular Automata Iterations:</label>
+            <input type="number" id="iterations" name="iterations" value="1" required>
+
+            <label for="key">Key (0 to 1]:</label>
+            <input type="number" id="key" name="key" min="0.0000000000000000000000001" max="1" step="any" value="0.5" required>
+
+            <label for="delta">Delta (Key Sensitivity):</label>
+            <input type="number" id="delta" name="delta" min="1e-25" step="any" value="0.00001" required>
+
+            <button type="submit">Encrypt & Decrypt</button>
+        </form>
+
+        <div id="resultsContainer" class="hidden">
+            <h3>Results</h3>
+
+            <div id="previewContainer" class="hidden">
+                <div id="imagePreviews" class="preview-grid">
+                    <div>
+                        <p>Encrypted Image</p>
+                        <img id="previewEncrypted" src="" alt="Encrypted Image">
+                        <a id="downloadEncrypted" href="#" download>Download Encrypted Image</a>
+                    </div>
+                    <div>
+                        <p>Decrypted Image</p>
+                        <img id="previewDecrypted" src="" alt="Decrypted Image">
+                        <a id="downloadDecrypted" href="#" download>Download Decrypted Image</a>
+                    </div>
+                    <div>
+                        <p>Correlation Plot 1</p>
+                        <img id="previewCorr1" src="" alt="Correlation Plot 1">
+                        <a id="downloadCorrelation1" href="#" download>Download Correlation Plot 1</a>
+                    </div>
+                    <div>
+                        <p>Correlation Plot 2</p>
+                        <img id="previewCorr2" src="" alt="Correlation Plot 2">
+                        <a id="downloadCorrelation2" href="#" download>Download Correlation Plot 2</a>
+                    </div>
+                    <div>
+                        <p>Histogram Plot</p>
+                        <img id="previewHist" src="" alt="Histogram Plot">
+                        <a id="downloadHistogram" href="#" download>Download Histogram Plot</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="excelDownloadLink" class="hidden">
+                <h4>Download Excel Sheet</h4>
+                <a id="downloadExcel" href="#" download>Download Excel</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img src="" alt="Full screen image">
+    </div>
+
+    <script src="static\script.js"></script>
+</body>
+</html>

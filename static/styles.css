@@ -1,0 +1,337 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    margin: 0;
+    padding: 2rem;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Main Container */
+.container {
+    max-width: 900px;
+    width: 90vw;
+    background: linear-gradient(to right, #ffffff, #ecf0f1); /* Subtle gradient for a light and fresh feel */
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    margin-top: 2rem;
+    overflow: auto;
+}
+
+/* Hover effect for container */
+.container:hover {
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    transition-delay: 0.1s;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent background for form */
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px); /* Blurring the background for more focus */
+}
+
+/* Heading Styles */
+h3 {
+    text-align: center;
+    color: #c0392b;
+    font-size: 2rem; 
+    margin-bottom: 1rem;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.4rem; /* Slightly larger for main title */
+    color: #ff7f50; /* Sunset Orange */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1), 0 0 25px rgba(255, 127, 80, 0.4); /* Adding subtle shadow */
+    transition: transform 0.3s ease, text-shadow 0.3s ease; /* Smooth transition for hover effect */
+}
+
+h1:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2), 0 0 35px rgba(255, 127, 80, 0.5); /* Stronger shadow effect */
+}
+
+h1::before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background-color: #ff7f50; /* Sunset Orange underline */
+    transition: width 0.3s ease;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+h1:hover::before {
+    width: 100%; /* Underline appears on hover */
+}
+
+/* Tagline Styles */
+.tagline-wrapper {
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.3rem;
+    color: #1abc9c;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    font-style: italic;
+    background: linear-gradient(to right, #ecf0f1, #ffffff);
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 6px;
+}
+
+/* Form Inputs and Button Styling */
+label {
+    font-size: 1.2rem;
+    color: #34495e;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    margin-bottom: 0.6rem;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+input[type="file"],
+input[type="number"],
+button {
+    padding: 1rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+input[type="file"] {
+    cursor: pointer;
+}
+
+input[type="file"]:focus,
+input[type="number"]:focus,
+button:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Add spacing between form elements */
+form label,
+form input {
+    margin-bottom: 1rem;
+}
+
+/* Results Section */
+#resultsContainer {
+    margin-top: 2rem;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+#imageDownloadLinks,
+#plotsDownloadLinks,
+#excelDownloadLink {
+    margin-top: 1.5rem;
+}
+
+a {
+    color: #3498db;
+    font-weight: 600;
+    text-decoration: none;
+    transition: text-decoration 0.3s ease;
+    font-size: 1.1rem;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Preview Section */
+#previewContainer {
+    margin-top: 2rem;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.preview-grid img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    padding: 0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.preview-grid img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Hidden Class for Non-Essential Elements */
+.hidden {
+    display: none;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Layout for Mobile Devices */
+@media (max-width: 768px) {
+    .container {
+        padding: 2rem;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    .preview-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    button {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.9rem;
+    }
+
+    .preview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    button {
+        padding: 1.2rem;
+        font-size: 1.2rem;
+    }
+
+    label {
+        font-size: 1rem;
+    }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal img {
+    max-width: 90%;
+    max-height: 90%;
+    border: 5px solid #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Close Button */
+.modal .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal .close:hover {
+    color: #e74c3c;
+}
+
+#uploadedPreviewContainer {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+ .preview-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    padding: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.preview-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+} 
