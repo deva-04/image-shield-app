@@ -7,6 +7,7 @@ from skimage.metrics import structural_similarity as ssim
 import random
 import cv2
 from .encryptor import encrypt_image, decrypt_image
+import gc
 
 def correlation_coefficient(image1, image2):
     if image1.shape != image2.shape:
@@ -21,21 +22,26 @@ def npcr_uaci(image1, image2):
     return NPCR, UACI
 
 def plot_correlation(image1, image2, save_path, title="Image Correlation", label1="Image 1", label2="Image 2"): 
-    r = correlation_coefficient(image1, image2)
+    try:
+        r = correlation_coefficient(image1, image2)
 
-    if len(image1.shape) == 3:
-        image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-    if len(image2.shape) == 3:
-        image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+        if len(image1.shape) == 3:
+            image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+        if len(image2.shape) == 3:
+            image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
 
-    plt.figure(figsize=(5, 5))
-    plt.scatter(image1.flatten(), image2.flatten(), s=1, alpha=0.5)
-    plt.xlabel(f"Pixel values of {label1}")
-    plt.ylabel(f"Pixel values of {label2}")
-    plt.title(f"{title}\nCorrelation Coefficient: {r:.4f}")
-    plt.tight_layout()
-    plt.savefig(str(save_path), dpi=100)
-    plt.close('all')
+        plt.figure(figsize=(5, 5))
+        plt.scatter(image1.flatten(), image2.flatten(), s=1, alpha=0.5)
+        plt.xlabel(f"Pixel values of {label1}")
+        plt.ylabel(f"Pixel values of {label2}")
+        plt.title(f"{title}\nCorrelation Coefficient: {r:.4f}")
+        plt.tight_layout()
+        plt.savefig(str(save_path), dpi=72)
+        plt.close('all')
+        gc.collect()
+
+    except Exception as e:
+        print(f"[ERROR] plot_correlation failed: {e}")
 
 def compute_histogram(image):
     hist = np.histogram(image.flatten(), bins=256, range=(0, 256))[0]
@@ -43,35 +49,29 @@ def compute_histogram(image):
     return hist
 
 def plot_histograms(original_image, encrypted_image, save_path):
-    if original_image.shape[0] > 128 or original_image.shape[1] > 128:
-        original_image = cv2.resize(original_image, (128, 128), interpolation=cv2.INTER_AREA)
-        encrypted_image = cv2.resize(encrypted_image, (128, 128), interpolation=cv2.INTER_AREA)
+    try:
+        plt.figure(figsize=(10, 4))
 
-    # Convert to grayscale
-    if len(original_image.shape) == 3:
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-    if len(encrypted_image.shape) == 3:
-        encrypted_image = cv2.cvtColor(encrypted_image, cv2.COLOR_BGR2GRAY)
+        # Histogram for original image
+        plt.subplot(1, 2, 1)
+        plt.hist(original_image.ravel(), bins=256, color='blue', alpha=0.7)
+        plt.title("Original Image Histogram")
+        plt.xlabel("Pixel Intensity")
+        plt.ylabel("Frequency")
 
-    original_hist = compute_histogram(original_image)
-    encrypted_hist = compute_histogram(encrypted_image)
+        # Histogram for encrypted image
+        plt.subplot(1, 2, 2)
+        plt.hist(encrypted_image.ravel(), bins=256, color='red', alpha=0.7)
+        plt.title("Encrypted Image Histogram")
+        plt.xlabel("Pixel Intensity")
+        plt.ylabel("Frequency")
 
-    plt.figure(figsize=(10, 4))
-    plt.subplot(1, 2, 1)
-    plt.bar(np.arange(256), original_hist, color='blue', alpha=0.7)
-    plt.title("Original Histogram")
-    plt.xlabel("Pixel Value")
-    plt.ylabel("Frequency")
+        plt.tight_layout()
+        plt.savefig(str(save_path), dpi=80, bbox_inches='tight')  # Reduce DPI to save memory
+        plt.close()  # Free memory after saving plot
 
-    plt.subplot(1, 2, 2)
-    plt.bar(np.arange(256), encrypted_hist, color='orange', alpha=0.7)
-    plt.title("Encrypted Histogram")
-    plt.xlabel("Pixel Value")
-    plt.ylabel("Frequency")
-
-    plt.tight_layout()
-    plt.savefig(str(save_path), dpi=100)
-    plt.close('all')
+    except Exception as e:
+        print(f"[ERROR] plot_histograms failed: {e}")
 
 def entropy(image):
     hist = compute_histogram(image)

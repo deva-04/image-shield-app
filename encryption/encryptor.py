@@ -6,21 +6,28 @@ from encryption.diffusion_and_permutation import reversible_xor_diffusion, rever
 from encryption.chaotic_maps import generate_chaotic_sequence, spatiotemporal_chaos, binary_chaotic_mask
 from encryption.rca import apply_rca 
 
-def resize_image(image):
-    if len(image.shape) == 3:  # If the image is RGB
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# def resize_image(image):
+#     if len(image.shape) == 3:  # If the image is RGB
+#         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    height, width = image.shape
-    if (height, width) == (256, 256):
-        print(f"Image is already 256x256. Proceeding with encryption...")
-        processed_image = image  # No resizing needed
-    elif (height, width) == (512, 512):
-        print(f"Image is already 512x512. Proceeding with encryption...")
-        processed_image = image
-    else:
-        print(f"Image is {height}x{width}, resizing to 512x512 for consistency.")
-        processed_image = cv2.resize(image, (512, 512))
-    print(f"Processing image of size: {processed_image.shape}")
+#     height, width = image.shape
+#     if (height, width) == (256, 256):
+#         print(f"Image is already 256x256. Proceeding with encryption...")
+#         processed_image = image  # No resizing needed
+#     elif (height, width) == (512, 512):
+#         print(f"Image is already 512x512. Proceeding with encryption...")
+#         processed_image = image
+#     else:
+#         print(f"Image is {height}x{width}, resizing to 512x512 for consistency.")
+#         processed_image = cv2.resize(image, (512, 512))
+#     print(f"Processing image of size: {processed_image.shape}")
+#     return processed_image
+
+def resize_image(image):
+    if len(image.shape) == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    processed_image = cv2.resize(image, (256, 256))
+    print(f"Resized image to 256x256 for consistent processing.")
     return processed_image
 
 def encrypt_image(image, mu=3.99, iterations=1, key=0.5):
